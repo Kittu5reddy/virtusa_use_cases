@@ -56,16 +56,12 @@ hour = st.slider("Select Hour of Travel (0-23)", 0, 23, 12)
 if st.button("Calculate Fare"):
     try:
         fare, surge = calculate_fare(km, vehicle_type, hour)
-
         st.success("✅ Fare Calculated Successfully!")
-
         st.subheader("🧾 Ride Estimate")
-
         st.write(f"**Distance:** {km} km")
         st.write(f"**Vehicle Type:** {vehicle_type}")
         st.write(f"**Rate per km:** ₹{RATES[vehicle_type]}")
         st.write(f"**Travel Hour:** {hour}:00")
-
         if surge > 1:
             st.warning(f"⚡ Surge Applied: {surge}x (Peak Hours)")
         else:

@@ -1,0 +1,4 @@
+2. Core Java: The "SafeLog" Password Validator
+Business Case: A cybersecurity firm needs a tool for their "Employee Portal" that forces employees to create strong passwords. Standard "if-else" isn't enough; they need a modular approach.
+Problem Statement
+Build a Password Strength Checker that validates a string against corporate security policies and provides specific feedback on why a password failed.
