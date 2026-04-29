@@ -1,149 +1,140 @@
-# CityCab Fare Calculator (Python Use Case)
+# CityCab — FareCalc (Python)
 
-## Business Case
+## Table of Contents
 
-CityCab is a ride-sharing startup that needs a reliable fare estimation backend.
-The fare is dynamic and depends on:
-
-- Distance traveled
-- Vehicle type selected by the customer
-- Time of day (surge pricing during peak hours)
-
-This project provides a clean Python implementation of that logic, along with:
-
-- A command-line interface for quick testing
-- A Streamlit web UI for interactive usage
+- Problem Statement
+- Project Structure
+- Installation
+- Command-line Usage
+- GUI (Streamlit) Usage
+- Persistence & Database
+- Scalability & Next Steps
+- Contributing
+- License
 
 ## Problem Statement
 
-Build a script that calculates the final Ride Estimate based on:
+Core Python: The "FareCalc" Travel Optimizer
 
-- Distance in kilometers
-- Vehicle type
-- Surge pricing multiplier (applied during peak hours)
+Business Case: A ride-sharing startup, "CityCab," needs a backend script to calculate fares. The fare isn't flat; it changes based on the time of day (Peak Hours) and the type of vehicle requested.
 
-## Solution Overview
+Write a script that calculates the final "Ride Estimate" based on distance, vehicle type, and a "Surge Pricing" multiplier.
 
-The fare calculation logic is centralized in the service layer.
+Student Tasks implemented in this repository:
 
-Base formula:
-Final Fare = Distance _ Vehicle Rate _ Surge Multiplier
-
-### Vehicle Rates
-
-- ECONOMY: 10 per km
-- PREMIUM: 18 per km
-- SUV: 25 per km
-
-### Surge Pricing Rule
-
-- Peak hours: 17:00 to 20:59 (hours 17, 18, 19, 20)
-- Surge multiplier during peak: 1.5
-- Otherwise: 1.0
+1. Dictionary Mapping: Vehicle rates per km are stored in `constants.py` (e.g., ECONOMY, PREMIUM, SUV).
+2. Surge Logic: If the travel hour is between 17 and 20 (5 PM - 8 PM), a 1.5x surge multiplier is applied.
+3. Function Definition: `service.fare_service.calculate_fare(km, type, hour)` returns the final price and surge multiplier.
+4. Error Handling: Invalid vehicle types raise `VehicleTypeNotFoundException`.
 
 ## Project Structure
 
-- app.py: Streamlit UI for fare calculation
-- service.py: Core business logic and CLI entry point
-- requirements.txt: Python dependencies
-- **init**.py: Package marker file
+Top-level layout:
 
-## Core Function
+```
+__init__.py
+app.py
+constants.py
+main.py
+problem_statement.txt
+readme.md
+requirements.txt
+database/
+	__init__.py
+	model.py
+	repositary.py
+exceptions/
+	vehicle_type_not_found_exception.py
+images/
+repository/
+	fare_repository.py
+service/
+	fare_service.py
+```
 
-File: service.py
+- `main.py` — Command-line entrypoint and DB initialization (runs `command_line_main()` when executed).
+- `app.py` — Streamlit GUI for Fare Calculator and Transactions dashboard.
+- `service/fare_service.py` — Core fare calculation logic (`calculate_fare`).
+- `repository/fare_repository.py` — DB access for storing and retrieving fare transactions.
+- `database/` — SQLAlchemy model and DB engine/session.
+- `exceptions/vehicle_type_not_found_exception.py` — Custom exception for unsupported vehicle types.
 
-calculate_fare(kilometers: float, vehicle_type: str, hour: int) -> tuple[float, float]
+## Installation
 
-Returns:
+Prerequisites:
 
-- Final fare after surge
-- Applied surge multiplier
-
-Raises:
-
-- ValueError when hour is outside 0-23
-- VehicleTypeNotFoundException when vehicle type is invalid
-
-## Prerequisites
-
-- Python 3.10+
+- Python 3.8+
 - pip
 
-## Setup Instructions
+Install dependencies:
 
-1. Create a virtual environment:
-   python -m venv env
+```bash
+pip install -r requirements.txt
+```
 
-2. Activate the environment (Windows):
-   env\Scripts\activate
+The repository includes `requirements.txt` with `streamlit`, `sqlalchemy`, and `pandas` (verify versions as needed).
 
-3. Install dependencies:
-   pip install -r requirements.txt
+## Command-line Usage
 
-## Run Options
+Run the command-line version which prompts for inputs and prints a receipt:
 
-### 1) Streamlit Web App
+```bash
+python main.py
+```
 
-Run:
+Behavior:
+
+- Creates database tables on first run (via `Base.metadata.create_all`).
+- Prompts for distance (km), vehicle type (Economy/Premium/SUV), and hour (0-23).
+- Prints a formatted Ride Estimate and handles invalid inputs.
+
+## GUI (Streamlit) Usage
+
+Run the Streamlit dashboard for an interactive UI:
+
+```bash
 streamlit run app.py
+```
 
-What it does:
+Features:
 
-- Accepts distance, vehicle type, and travel hour
-- Calculates fare using shared service logic
-- Displays surge status and total fare
+- Fare Calculator page with inputs for distance, vehicle type and hour.
+- Transactions page showing saved rides (reads from the configured DB).
 
-### 2) Command-Line App
+## Persistence & Database
 
-Run:
-python service.py
+- A simple SQLite/SQLAlchemy setup is used via `database/*` and `repository/fare_repository.py`.
+- `main.py` ensures tables are created automatically on startup.
+- The Streamlit app uses `SessionLocal` to query transactions for the Transactions page.
 
-What it does:
+## Scalability & Next Steps
 
-- Prompts for ride inputs in terminal
-- Prints a formatted ride estimate receipt
+Design considerations and steps to scale this prototype into a production-ready service:
 
-## Example Calculation
+- API Layer: Expose the fare calculator as a REST API (Flask/FastAPI) so multiple clients can consume it.
+- Microservices: Split responsibilities (pricing service, transactions service, auth) for independent scaling.
+- Persistent DB: Move from SQLite to a managed DB (Postgres, Azure Database) for concurrency and reliability.
+- Caching: Use Redis to cache frequently used rate info and reduce DB reads.
+- Load Testing: Simulate traffic with tools like `locust` or `k6` before scaling horizontally.
+- Containerization: Add `Dockerfile` and orchestration manifests (Kubernetes / Docker Compose) for reproducible deployments.
+- Observability: Add logging, metrics (Prometheus), and tracing (OpenTelemetry) for production diagnostics.
 
-Input:
+## Contributing
 
-- Distance: 12 km
-- Vehicle: PREMIUM
-- Hour: 18
+1. Fork the repo
+2. Create a feature branch
+3. Open a PR with a clear description
 
-Calculation:
+Please run existing checks and unit tests (if any) before submitting a PR.
 
-- Base fare = 12 \* 18 = 216
-- Peak hour surge = 1.5
-- Final fare = 216 \* 1.5 = 324
+## License
 
-Output:
+Specify your license here (e.g., MIT). If unsure, add a `LICENSE` file.
 
-- Total Fare: 324.00
-- Surge Applied: 1.5x
+---
 
-## Error Handling
+If you want, I can also:
 
-The application validates key inputs:
-
-- Invalid hour (less than 0 or greater than 23) -> ValueError
-- Unsupported vehicle type -> VehicleTypeNotFoundException
-
-In Streamlit, errors are shown with friendly UI messages.
-In CLI mode, errors are printed in terminal.
-
-## Notes for Developers
-
-- Keep fare logic in service.py to avoid duplication.
-- Add tests for calculate_fare before extending pricing rules.
-- Future enhancements can include tax, discounts, and city-based rate cards.
-
-## Screenshots
-
-### App Home Screen
-
-![CityCab Fare Calculator Home](images/image1.png)
-
-### Fare Result Screen
-
-![CityCab Fare Calculator Result](images/image2.png)
+- Add a short `docker-compose.yml` demonstrating local DB + app run.
+- Generate a `requirements.txt` with pinned versions.
+- Add examples of unit tests for `calculate_fare`.
