@@ -15,13 +15,15 @@ WHERE
 -- Products NOT sold in last 60 days
 
 SELECT p.*
-FROM
-    Products p
-    LEFT JOIN SalesTransactions s ON p.product_id = s.product_id
-    AND s.sale_date >= SYSDATE - 60
+FROM Products p
 WHERE
-    s.product_id IS NULL;
-
+    p.product_id NOT IN (
+        SELECT DISTINCT
+            st.product_id
+        FROM SalesTransactions st
+        WHERE
+            st.sale_date >= ADD_MONTHS (SYSDATE, -2)
+    );
 -- =========================================
 -- 6. REVENUE CONTRIBUTION
 -- =========================================

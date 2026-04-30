@@ -27,7 +27,7 @@ def command_line_main():
 
         fare, surge = calculate_fare(km, vehicle_type, hour)
 
-        print("\n🧾 Ride Estimate Receipt")
+        print("\n Ride Estimate Receipt")
         print("----------------------------")
         print(f"Distance       : {km} km")
         print(f"Vehicle Type   : {vehicle_type}")

@@ -1,0 +1,10 @@
+1. SQL: The "Retail Insights" Data Analyst
+Business Case: A regional supermarket chain, "FreshMart," is losing money because they overstock items that don't sell and run out of items that do. They need a data-driven report to optimize their inventory.
+Problem Statement
+The Inventory Manager needs a "Stock Health Report" that identifies products nearing expiration and those that are "Dead Stock" (not sold in 60 days).
+Student Tasks:
+1.	Schema Design: Create three tables: Products, Categories, and SalesTransactions.
+2.	The "Expiring Soon" Query: Write a query to find all products where the ExpiryDate is within the next 7 days but StockCount is greater than 50.
+3.	The "Dead Stock" Analysis: Identify products that exist in the Products table but have zero entries in the SalesTransactions table for the last 2 months.
+4.	Revenue Contribution: Write a query using SUM and GROUP BY to show which Category generated the most revenue last month.
+Deliverable: A .sql script that creates the schema, populates dummy data, and provides these three specific reports.
